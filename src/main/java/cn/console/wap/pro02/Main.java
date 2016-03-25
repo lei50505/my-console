@@ -1,86 +1,110 @@
 package cn.console.wap.pro02;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import java.util.Scanner;
 
 public class Main {
-    
-    public static Node[] node ;
-    public int m,n;
-    static class Node{
-        boolean flag;
-        List<Integer> eds;
-        Node(){
-            flag=false;
-            eds=new ArrayList<Integer>();
-        }
-    }
-    static class State{
-        int par;
-        int no;
-        int dis;
-        public State() {
-        }
-    }
-    public static int bfs(int x){
-        Queue<State> que = new LinkedList<State>();
-        State sta =new State();
-        sta.par = 0;
-        sta.no = x;
-        sta.dis = 0;
-        que.add(sta);
-        while(!que.isEmpty()){
-            State cur = que.poll();
-            if(node[cur.no].flag){
-                return cur.dis;
-            }
-            List<Integer> vecs = node[cur.no].eds;
-            for(int i=0;i<vecs.size();++i){
-                if(vecs.get(i)==cur.par){
-                    continue;
-                }
-                State ns=new State();
-                ns.par=cur.no;
-                ns.no=vecs.get(i);
-                ns.dis=cur.dis+1;
-                que.add(ns);
-            }
-        }
-        return 0;
-    }
-    
     public static void main(String[] args) {
-        node = new Node[100001];
         Scanner sc = new Scanner(System.in);
-        int m,n;
-        m=sc.nextInt();
-        n=sc.nextInt();
-        int a,b;
-        for(int i=1;i<m;++i){
-            a=sc.nextInt();
-            b=sc.nextInt();
-            Node na = new Node();
-            na.eds.add(b);
-            Node nb = new Node();
-            nb.eds.add(a);
-            node[a]=na;
-            node[b]=nb;
+        int m, n;
+        n = sc.nextInt();
+        m = sc.nextInt();
+        Node[] nodes = new Node[n + 1];
+        for (int i = 1; i <= n; ++i) {
+            Node nodei = new Node(i);
+            nodes[i] = nodei;
         }
-        node[1].flag=true;
-        for (int i=0;i<n;++i){
-            a=sc.nextInt();
-            b=sc.nextInt();
-            if(a==1){
-                node[b].flag=true;
-            }else{
-                int dis =bfs(b);
+        int a, b;
+        // to build a binary tree
+        for (int i = 0; i < m - 1; i++) {
+            a = sc.nextInt();
+            b = sc.nextInt();
+            if (nodes[a].lc == null) {
+                nodes[a].lc = nodes[b];
+                nodes[b].p = nodes[a];
+            } else {
+                nodes[a].rc = nodes[b];
+                nodes[b].p = nodes[a];
+            }
+        }
+        nodes[1].isBlack = true;
+        int x, y;
+        for (int k = 0; k < n; ++k) {
+            x = sc.nextInt();
+            y = sc.nextInt();
+            if (x == 1) {
+                nodes[y].isBlack = true;
+            } else {
+                int dis = count(nodes[y]);
                 System.out.println(dis);
+                for (int i = 1; i <= n; ++i) {
+                    nodes[i].isCheck = false;
+                }
             }
         }
         sc.close();
-        
+    }
+
+    public static class Node {
+        int num;
+        //the left chilf
+        Node lc;
+        // the right child
+        Node rc;
+        // the parent
+        Node p;
+        //black means the city has the party
+        boolean isBlack = false;
+        // this means finded city, and every search need to reset
+        boolean isCheck = false;
+
+        Node(int num) {
+            this.num = num;
+        }
+    }
+
+    //use the dynamic programming based on a binary tree
+    public static int count(Node cur) {
+        if (cur == null) {
+            return -1;
+        } else {
+            cur.isCheck = true;
+        }
+        if (cur.isBlack) {
+            return 0;
+        }
+        int lcq = -1;
+        int rcq = -1;
+        int pq = -1;
+        if (cur.lc != null && !cur.lc.isCheck) {
+            int nn = count(cur.lc);
+            lcq = nn == -1 ? -1 : nn + 1;
+        }
+        if (cur.rc != null && !cur.rc.isCheck) {
+            int nn = count(cur.rc);
+            rcq = nn == -1 ? -1 : nn + 1;
+        }
+        if (cur.p != null && !cur.p.isCheck) {
+            int nn = count(cur.p);
+            pq = nn == -1 ? -1 : nn + 1;
+        }
+        return getMin(lcq, rcq, pq);
+    }
+
+    //To get the minimum Integer bigger than -1
+    public static int getMin(int a, int b, int c) {
+        if (a == -1 && b == -1 && c == -1) {
+            return -1;
+        }
+        if (a == -1) {
+            a = Integer.MAX_VALUE;
+        }
+        if (b == -1) {
+            b = Integer.MAX_VALUE;
+        }
+        if (c == -1) {
+            c = Integer.MAX_VALUE;
+        }
+        int d = a < b ? a : b;
+        return c < d ? c : d;
     }
 }
