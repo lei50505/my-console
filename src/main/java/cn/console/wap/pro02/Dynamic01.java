@@ -40,6 +40,7 @@ public class Dynamic01 {
                 }
             }
         }
+        sc.close();
     }
 
     public static class Node {
