@@ -36,7 +36,7 @@ public class Problem01 {
             if (v == -1 && i - 1 >= 0 && nodes[i - 1][m - 1].value > -1) {
                 nums.add(i - 1);
             }
-            if (v == -1 && i + 1 <= n && nodes[i + 1][m - 1].value > -1) {
+            if (v == -1 && i + 1 <= n-1 && nodes[i + 1][m - 1].value > -1) {
                 nums.add(i + 1);
             }
             if(i==0&&v>-1){
@@ -102,7 +102,7 @@ public class Problem01 {
                     cur = cur.down;
                 }
                 if (cur.value != -1) {
-                    flag = count(cur, null);
+                    flag = toLeft(cur);
                 } else {
                     flag = -1;
                 }
@@ -112,7 +112,7 @@ public class Problem01 {
                     cur = cur.up;
                 }
                 if (cur.value != -1) {
-                    flag = count(cur, null);
+                    flag = toLeft(cur);
                 } else {
                     flag = -1;
                 }
@@ -131,17 +131,18 @@ public class Problem01 {
 
     }
     public static int toLeft(Node cur) {
+        cur.isCheck=true;
         int lq = -1;
         if (cur.left != null && cur.left.value != -1) {
-            lq = count(cur.left, cur);
+            lq = toLeft(cur.left);
         }
         int uq = -1;
-        if (cur.up != null && cur.up.value != -1 && cur.up != from) {
-            uq = count(cur.up, cur);
+        if (cur.up != null && cur.up.value != -1 && cur.up.isCheck==false) {
+            uq = toLeft(cur.up);
         }
         int dq = -1;
-        if (cur.down != null && cur.down.value != -1 && cur.down != from) {
-            dq = count(cur.down, cur);
+        if (cur.down != null && cur.down.value != -1 && cur.isCheck==false) {
+            dq = toLeft(cur.down);
         }
         int tmp = lq > uq ? lq : uq;
         int max = tmp > dq ? tmp : dq;
@@ -156,8 +157,8 @@ public class Problem01 {
                 while (cur.down != null) {
                     cur = cur.down;
                 }
-                if (cur.value != -1) {
-                    flag = count(cur, null);
+                if (cur.value != -1&&!cur.isCheck) {
+                    flag = toLeft(cur);
                 } else {
                     flag = -1;
                 }
@@ -166,8 +167,8 @@ public class Problem01 {
                 while (cur.up != null) {
                     cur = cur.up;
                 }
-                if (cur.value != -1) {
-                    flag = count(cur, null);
+                if (cur.value != -1&&!cur.isCheck) {
+                    flag = toLeft(cur);
                 } else {
                     flag = -1;
                 }
