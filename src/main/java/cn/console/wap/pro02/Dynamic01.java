@@ -27,7 +27,7 @@ public class Dynamic01 {
         }
         nodes[1].isBlack = true;
         int x, y;
-        while (true) {
+        for (int k = 0; k < n; ++k) {
             x = sc.nextInt();
             y = sc.nextInt();
             if (x == 1) {
@@ -35,8 +35,8 @@ public class Dynamic01 {
             } else {
                 int dis = count(nodes[y]);
                 System.out.println(dis);
-                for(int i=1;i<=n;++i){
-                    nodes[i].isCheck=false;
+                for (int i = 1; i <= n; ++i) {
+                    nodes[i].isCheck = false;
                 }
             }
         }
@@ -68,16 +68,16 @@ public class Dynamic01 {
         int rcq = -1;
         int pq = -1;
         if (cur.lc != null && !cur.lc.isCheck) {
-            int nn =count(cur.lc);
-            lcq = nn==-1?-1:nn+1;
+            int nn = count(cur.lc);
+            lcq = nn == -1 ? -1 : nn + 1;
         }
         if (cur.rc != null && !cur.rc.isCheck) {
-            int nn =count(cur.rc);
-            rcq = nn==-1?-1:nn+1;
+            int nn = count(cur.rc);
+            rcq = nn == -1 ? -1 : nn + 1;
         }
         if (cur.p != null && !cur.p.isCheck) {
-            int nn =count(cur.p);
-            pq = nn==-1?-1:nn+1;
+            int nn = count(cur.p);
+            pq = nn == -1 ? -1 : nn + 1;
         }
         return getMin(lcq, rcq, pq);
     }
